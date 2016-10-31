@@ -1,0 +1,1075 @@
+<script>
+//http://localhost:8080/dhis/dhis-web-reporting/generateHtmlReport.action?uid=ZNLp6HfzvLE&pe=2015&ou=Z0UFDRtF3QS
+//bI8obl4GF1g
+var orgUnitChilds=dhis2.report.organisationUnitChildren;
+var orgUnit=dhis2.report.organisationUnit;
+var periods=dhis2.report.periods;
+var period =0;
+if(periods[0].substring(4,5) != "Q"){
+		if(periods[0].substring(4,6) == "12"){
+			period = (parseInt(periods[0].substring(0,4)) + 1) + "01";
+		}else{
+			if(periods[0].length > 4 && periods[0].substring(4,5) !=0){
+	 			period = periods[0].substring(0,4) + (parseInt(periods[0].substring(4,6)) + 1); 
+			}else{
+				if(periods[0].length > 4 && periods[0].substring(4,6) == "09"){
+						period = periods[0].substring(0,4) + (parseInt(periods[0].substring(4,6)) + 1); 
+				}else{			
+					if(periods[0].length > 4 && periods[0].substring(4,5) == 0){
+						period = periods[0].substring(0,4) + "0" + (parseInt(periods[0].substring(4,6)) + 1); 
+					}
+					else{
+						period=periods[0];
+					}
+				}
+			}
+		
+		}
+}else{
+if(periods[0].substring(4,6) == "Q4"){
+		period = (parseInt(periods[0].substring(0,4)) + 1) + "Q1";
+}else{
+		if(periods[0].length > 4){
+	 		period = periods[0].substring(0,4) + "Q" + (parseInt(periods[0].substring(5)) + 1); 
+		}
+		else{
+			period=periods[0];
+		}
+}
+}
+var stt=0;
+var NumberofOutpatients=["oHlK927voMC","jkdoAltvfdH"];
+var Morbiditys=["rjyXugnU9Bi","qKSYTJCnu2h"];
+var DEs ="XllLu1GCAeS;skLT98TNkwb;kQqNMJPJma5;hxt2x6gRkA0;oYfB3FjksFa;s2A7SFUJ4EV;asoEsdrMYT8;ClXZmQk9Me3;OZofnqSM5ND;mh27V8iHq01;nIteVZATy00;mugUTlzyoyB;SmZjN6DWBm9;DPbckZtRLZE;XInD30Xv1pY;N5VMEO1Bybj;GOliVVBYlyr;GFW0EUlIxlv;jxOJyu0Yhhs;NCYW59ZpnKs;PoQHFlShsy1;ocDPg2AXOM5;pQnUnDTKqsI;UgsjrhyGiwI;fKc2ECsxgJ1;gW6dJTOO061;cJSD0yoIjxh;G8Lkwlg3JXh;fzK3Nv5M4Jc;lk70xLzuPEB;aBTMUF1OxB3;cHqYF2aXgm8;VsYlAkwHBIS;zc5qswSBzxX;L2pudp7aRYz;oHlK927voMC;jkdoAltvfdH;qp1F4ZzLq77;RHTREWU67d7;GxX24yOwPQQ;n0Z5PAd0WAc;HK7Dl5zK1Cq;iWtJVujm0xT;ieo3pznkP6a;hnsoaD3VJGq;Ol6aCtE7rf9;UJw3eKP6XYd;SaSTJrCFmiH;GPb3RAfXbb0;zAlivoJfV2u;L7fXQ7KmMzC;Sb56Zhuk9Aj;VHEykEUdkH9;SAKVuJ3BsdP;e7yEYGzRwoU;rTX48qDZ2MB;Bivw4zCNqKO;VShwlUvry5M;JvIJkiDUYjw;Vfgf9M3so35;IR8Q708MLqr;qesQEOckRc5;XnSHWSmD8dM;plMJ7pLnzO8;rjyXugnU9Bi;qKSYTJCnu2h;VDg3GQFkMNi;y2aAX8RMYbB;H1ZfG0VuFWb;yd7hJiYnDYL;PSg9EkmHSOr;WsaQzQhDqT2;eNhMXWRLpBC;uzvioJlBG5L;TAwkOqxwC3K;pY9p3JdUPnT;bVy2Er2v7sU;EiafLPW4BC6;dSk53TpdKOp;U6HGhXCEWYl;Moc7DBVPoHd";
+$(document).ready(function() {
+	var stringOrg = "";
+	var countChild = 0;
+	if(periods[0].length > 4 && periods[0].substring(4,5) == "Q"){
+		$("#orgunitid").append(orgUnit.name+"-501.1. Quarterly data report form");
+	}
+	if(periods[0].length > 4 && periods[0].substring(4,5) != "Q"){
+		$("#orgunitid").append(orgUnit.name+"-501.1. Monthly data report form");
+	}
+	if(periods[0].length == 4){
+		$("#orgunitid").append(orgUnit.name+"-501.1. Yearly data report form");
+	}
+	
+	orgUnitChilds.forEach(function(child){
+			//???-501.1. Monthly data collection form
+			
+			$("#title").append("<td rowspan='2'><strong>"+child.name+"</strong></td>");
+			countChild++;
+			if(countChild==1)
+				stringOrg += child.id;
+			else
+				stringOrg += ";" + child.id;
+	});
+	$.get("../api/analytics.json?dimension=co&dimension=dx:"+DEs+"&dimension=ou:"+stringOrg+"&filter=pe:"+period, function(json){
+		var string = "/api/analytics.json?dimension=co&dimension=dx:"+DEs+"&dimension=ou:"+stringOrg+"&filter=pe:"+period;
+		console.log(string);
+		$("#title").append("<td rowspan='2'><strong>Total</strong></td>");
+		//var delivery ="delivery";
+		writeRow("XllLu1GCAeS",json,"delivery");//1
+		writeRow("skLT98TNkwb",json,"PregnantANC6");//2
+		writeRow("kQqNMJPJma5",json,"deliveryathome");//3
+		//$("#NumberofLB").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//4
+		writeRowWithCATwoRow("hxt2x6gRkA0",json,"NumberofLBMale","NumberofLBFemale","JQbUHQpctTU","aBhbvwseMh1","NumberofLB");//5,6
+		writeRowWithCATwoRow("oYfB3FjksFa",json,"NumberofLBUrban","NumberofLBRural","cnQ3XqSkuzo","Kks5iP46E2s");//7,8
+		writeRow("s2A7SFUJ4EV",json,"LBFedpromised");//9
+		writeRow("asoEsdrMYT8",json,"LBAbnormality");//10
+		writeRow("ClXZmQk9Me3",json,"LBlessthan2500g");//11
+		writeRowWithCAFiveRow("OZofnqSM5ND",json,"LB22-28weeks","LB29-32weeks","LB33-36weeks","LB37-42weeks","LB42weeks","ORX6NwFYReA","utggi1Ka8DO","pwHll108P53","lwWB6ujF1HT","jzsUgztuxeV");//12,16
+		//$("#NumberofSB").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//17
+		writeRowWithCATwoRow("mh27V8iHq01",json,"NumberofSBMale","NumberofSBFemale","JQbUHQpctTU","aBhbvwseMh1","NumberofSB");//18,19
+		writeRowWithCAFiveRow("nIteVZATy00",json,"SB22-28weeks","SB29-32weeks","SB33-36weeks","SB37-42weeks","SB42weeks","ORX6NwFYReA","utggi1Ka8DO","pwHll108P53","lwWB6ujF1HT","jzsUgztuxeV");//20,21,22,23,24
+		writeRow("mugUTlzyoyB",json,"SBlessthan2500g");//25
+		//$("#NumberofMortality").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//26
+		writeRowWithCATwoRow("SmZjN6DWBm9",json,"NumberofMortalityMale","NumberofMortalityFemale","JQbUHQpctTU","aBhbvwseMh1","NumberofMortality");//27,28
+		writeRow("DPbckZtRLZE",json,"MoHospitaldeaths");//29
+		writeRow("XInD30Xv1pY",json,"Modeath24hrs");//30
+		writeRow("N5VMEO1Bybj",json,"Modeath8-24");//31
+		writeRow("GOliVVBYlyr",json,"Modeathoutofhospital");//32
+		//$("#NumberofInMo").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//33
+		writeRowWithCATwoRow("GFW0EUlIxlv",json,"InMoMale","InMoFemale","JQbUHQpctTU","aBhbvwseMh1","NumberofInMo");//34,35
+		writeRowWithCATwoRow("jxOJyu0Yhhs",json,"InMoUrban","InMoRural","cnQ3XqSkuzo","Kks5iP46E2s");//36,37
+		writeRow("NCYW59ZpnKs",json,"InMo0-6");//38
+		writeRow("PoQHFlShsy1",json,"InMo7-28");//39
+		writeRow("ocDPg2AXOM5",json,"InMoabove29");//40
+		writeRow("pQnUnDTKqsI",json,"InMoathome");//41
+		writeRowWithCATwoRow("UgsjrhyGiwI",json,"NumberOf1to5ageMoMale","NumberOf1to5ageMoFemale","JQbUHQpctTU","aBhbvwseMh1","NumberOf1to5ageMo");//42,43
+		writeRowWithCATwoRow("fKc2ECsxgJ1",json,"NumberOf1to5ageMoUrBan","NumberOf1to5ageMoRural","cnQ3XqSkuzo","Kks5iP46E2s");//44,45
+		writeRow("gW6dJTOO061",json,"NumberOf1to5ageMoathome");//46
+		//$("#NumberofMaMo").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//47
+		writeRowWithCATwoRow("cJSD0yoIjxh",json,"NumberofMaMoUrban","NumberofMaMoRural","cnQ3XqSkuzo","Kks5iP46E2s","NumberofMaMo");//48,49
+		writeRow("G8Lkwlg3JXh",json,"NumberofCancerMo");//50
+		//$("#MocausedbyInPoiandOtherExfactor").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//51
+		writeRowWithCASixRow("fzK3Nv5M4Jc",json,"Suiside","ViolenceHomecide","Industrialaccidents","Trafficaccident","Others","Unknown","oWQuWCcQ0gi","lBvwcwM5D1m","tIQ8KzlTh5A","FpC68coE6V8","JRZWHdQrdU1","HnI8WBE32SX","MocausedbyInPoiandOtherExfactor");//52,53,54,55,56,57
+		//$("#NumberofInpatient").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//58
+		writeRowWithCATwoRow("lk70xLzuPEB",json,"NumberofInpatientUrban","NumberofInpatientRural","cnQ3XqSkuzo","Kks5iP46E2s","NumberofInpatient");//59,60
+		//$("#NumberofInpatientfromlowerlevelofcare").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//61
+		writeRowWithCAFiveRow("aBTMUF1OxB3",json,"Aimaggenerelhospital","Soumhealthcenter","Intersoumhealthcenter","PHCdistricthealthcenter","OutofOthers","ILARGjxhJi3","jUClElC8uCc","cZZnPRMISMg","bVYl3Dj933N","g1nHt8X2M6i","NumberofInpatientfromlowerlevelofcare");//61,66
+		writeRow("cHqYF2aXgm8",json,"Numberofdischarge");//67
+		writeRow("VsYlAkwHBIS",json,"Beddays");//68
+	    //$("#NumberofExamination").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//69
+		writeRowWithCATwoRow("zc5qswSBzxX",json,"NumberofExaminationMale","NumberofExaminationFemale","JQbUHQpctTU","aBhbvwseMh1","NumberofExamination");//70,71
+		writeRow("L2pudp7aRYz",json,"Preventivemedicalcheckups");//72
+		//$("#NumberofOutpatient").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//73
+		sumRow(NumberofOutpatients,json,"NumberofOutpatient");
+		writeRow("oHlK927voMC",json,"NumberofOutpatient1stTime");//74
+		writeRow("jkdoAltvfdH",json,"NumberofOutpatientRepeat");//75
+		writeRow("qp1F4ZzLq77",json,"Activeexamination");//76
+		writeRow("RHTREWU67d7",json,"Activevisittohousehold");//77
+		writeRow("GxX24yOwPQQ",json,"Numberofcallhomeinspection");//78
+		writeRow("n0Z5PAd0WAc",json,"Numberofoutpatientfromthelowercare");//79
+		//$("#Numberofmedicalexamination").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//80
+		writeRowWithCASevenRow("HK7Dl5zK1Cq",json,"MedicalHierachyBags","MedicalHierachySoums","MedicalHierachyMidwife","MedicalHierachySoumsPhys","MedicalHierachyAimagHC","MedicalHierachyPHCs","MedicalHierachyOthers","rwqVMOga4pG","xdKfMcAiI4v","SJldsI6RQJv","BvlUGcqb5A7","Tr7YfQTksq6","egEAKKb88GB","LCbAb1oV4Ma","Numberofmedicalexamination");//81,87
+		//$("#Hypertension1stTime").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//88
+		writeRowWithCATwoRow("iWtJVujm0xT",json,"Hypertension1stTimeMale","Hypertension1stTimeFemale","JQbUHQpctTU","aBhbvwseMh1","Hypertension1stTime");//89,90
+		writeRow("ieo3pznkP6a",json,"Hypertension1stTimeRepeat");//91
+		writeRow("hnsoaD3VJGq",json,"Munberwithhypertension");//92
+		//$("#Numberofpeoplediabetestype1stTime").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//93
+		writeRowWithCATwoRow("Ol6aCtE7rf9",json,"Numberofpeoplediabetestype1stTimeMale","Numberofpeoplediabetestype1stTimeFemale","JQbUHQpctTU","aBhbvwseMh1","Numberofpeoplediabetestype1stTime");//94,95
+		writeRow("UJw3eKP6XYd",json,"Numberofpeoplediabetestype1stTimeRepeat");//96
+		writeRow("SaSTJrCFmiH",json,"Munberwithdiabetes");//97
+		writeRow("GPb3RAfXbb0",json,"NumberofPregnanWomen");//98
+		writeRow("zAlivoJfV2u",json,"ANCcov");//99
+		writeRow("L7fXQ7KmMzC",json,"earlyANCcov");//100
+		writeRow("Sb56Zhuk9Aj",json,"ANCcov4-6");//101
+		writeRow("VHEykEUdkH9",json,"LateANCcov");//102
+		writeRow("SAKVuJ3BsdP",json,"numberofbloodtestingpregnantwomen");//103
+		writeRow("e7yEYGzRwoU",json,"hemoglobulintest");//104
+		writeRow("rTX48qDZ2MB",json,"NumberofPrenantwithanemia");//105
+		writeRow("Bivw4zCNqKO",json,"NumberofPrenanttestedfortrichominiasis");//106
+		writeRow("VShwlUvry5M",json,"NumberofPrenanttestedfortrichominiasisoutpositive");//107
+		writeRow("JvIJkiDUYjw",json,"NumberofPregnantrestedforgonorea");//108
+		writeRow("Vfgf9M3so35",json,"NumberofPregnantrestedforgonoreaoutpositive");//109
+		writeRow("IR8Q708MLqr",json,"NumberofPregnanttestedforsypilis");//110
+		writeRow("qesQEOckRc5",json,"NumberofPregnanttestedforsypilisoutpositive");//111
+		writeRow("XnSHWSmD8dM",json,"NumberofPregnanttestedforHIV");//112
+		writeRow("plMJ7pLnzO8",json,"NumberofPregnanttestedforHIVoutpositive");//113
+		//$("#Morbidity").append("<td colspan="+ orgUnitChilds.length+1 +"></td>");//114
+		sumRow(Morbiditys,json,"Morbidity");
+		writeRow("rjyXugnU9Bi",json,"MorbidityNewregis");//115
+		writeRow("qKSYTJCnu2h",json,"MorbidityRegistered");//116
+		writeRow("VDg3GQFkMNi",json,"MorbidityCancer");//117
+		writeRow("y2aAX8RMYbB",json,"MorbidityInjury");//118
+		writeRow("H1ZfG0VuFWb",json,"MorbidityInfluenza");//119
+		writeRow("yd7hJiYnDYL",json,"Morbidityunder5diarhea");//120
+		writeRow("PSg9EkmHSOr",json,"Morbidityunder5acute");//121
+		writeRow("WsaQzQhDqT2",json,"Morbidityweightedunder5");//122
+		writeRow("eNhMXWRLpBC",json,"Morbidityunder5underweight");//123
+		writeRow("uzvioJlBG5L",json,"Morbidityunder5stun");//124
+		writeRow("TAwkOqxwC3K",json,"Morbidityunder5waste");//125
+		writeRow("pY9p3JdUPnT",json,"Morbidityunder5vitaminA");//126
+		writeRow("bVy2Er2v7sU",json,"Morbidityunder5vitaminD");//127
+		writeRow("EiafLPW4BC6",json,"Morbidityunder5nutrient");//128
+		writeRow("dSk53TpdKOp",json,"NumberofEmergencycall");//129
+		writeRow("U6HGhXCEWYl",json,"Ambulancecall");//130
+		writeRow("Moc7DBVPoHd",json,"Injurycases");//131
+
+	});
+});
+
+
+function writeRow(de,json,rowid){
+
+	var row="";
+	stt++;
+	var temp=0;
+	var sum=0;
+	//row="<td>"+dename+"</td>";
+	orgUnitChilds.forEach(function(child){
+		
+			temp++;
+			row += "<td align='center'>"+getValue(json, "iu57yAF8dfP", de, child.id)+"</td>";
+			sum = sum + getValue(json, "iu57yAF8dfP", de, child.id);
+			if(temp==orgUnitChilds.length)
+			{
+				row += "<td align='center'><strong>"+sum+"</strong></td>";
+			}
+		
+	});
+	//row=row+"</tr>";
+	$("#"+rowid+"").append(row);
+}
+
+function writeRowWithCATwoRow(de,json,idFirstRow,idSecondRow,idCaFirstRow,idCaSecondRow,SumID){
+	var firstRow="";
+	var secondRow="";
+	var sumrow = "";
+	stt++;
+	var temp=0;
+	var sumfirstRow=0;
+	var sumsecondRow=0;
+	var sumall = 0;
+	orgUnitChilds.forEach(function(child){
+		temp++;
+		firstRow += "<td align='center'>"+getValue(json, idCaFirstRow, de, child.id)+"</td>";
+		secondRow += "<td align='center'>"+getValue(json, idCaSecondRow, de, child.id)+"</td>";
+		sumfirstRow=sumfirstRow+getValue(json, idCaFirstRow, de, child.id);
+		sumsecondRow=sumsecondRow+getValue(json, idCaSecondRow, de, child.id);
+		if(SumID=="NumberofLB" || SumID=="NumberofSB" || SumID == "NumberofMortality" || SumID == "NumberOf1to5ageMo" || SumID == "NumberofMaMo" || SumID == "NumberofInpatient" || SumID == "NumberofExamination" || SumID == "Hypertension1stTime" || SumID == "Numberofpeoplediabetestype1stTime" || SumID == "NumberofInMo"){
+			sumrow += "<td align='center'><strong>"+(getValue(json, idCaFirstRow, de, child.id)+getValue(json, idCaSecondRow, de, child.id))+"</strong></td>";
+		}
+		if(temp==orgUnitChilds.length)
+		{
+			if(SumID=="NumberofLB" || SumID=="NumberofSB" || SumID == "NumberofMortality" || SumID == "NumberOf1to5ageMo" || SumID == "NumberofMaMo" || SumID == "NumberofInpatient" || SumID == "NumberofExamination" || SumID == "Hypertension1stTime" || SumID == "Numberofpeoplediabetestype1stTime" || SumID == "NumberofInMo"){
+				sumrow += "<td align='center'><strong>"+(sumfirstRow+sumsecondRow)+"</strong></td>";
+			}
+			firstRow += "<td align='center'><strong>"+sumfirstRow+"</strong></td>";
+			secondRow += "<td align='center'><strong>"+sumsecondRow+"</strong></td>";
+		}            
+	});
+	//male=male+"</tr>";
+	//female=male+"</tr>";
+	if(SumID == "NumberofLB"){
+		$("#NumberofLB").append(sumrow);
+	}
+	if(SumID == "NumberofSB"){
+		$("#NumberofSB").append(sumrow);
+	}
+	if(SumID == "NumberofMortality"){
+		$("#NumberofMortality").append(sumrow);
+	}
+	if(SumID == "NumberofInMo"){
+		$("#NumberofInMo").append(sumrow);
+	}
+	if(SumID == "NumberOf1to5ageMo"){
+		$("#NumberOf1to5ageMo").append(sumrow);
+	}
+	if(SumID == "NumberofMaMo"){
+		$("#NumberofMaMo").append(sumrow);
+	}
+	if(SumID == "NumberofInpatient"){
+		$("#NumberofInpatient").append(sumrow);
+	}
+	if(SumID == "NumberofExamination"){
+		$("#NumberofExamination").append(sumrow);
+	}
+	if(SumID == "Hypertension1stTime"){
+		$("#Hypertension1stTime").append(sumrow);
+	}
+	if(SumID == "Numberofpeoplediabetestype1stTime"){
+		$("#Numberofpeoplediabetestype1stTime").append(sumrow);
+	}
+
+	$("#"+idFirstRow+"").append(firstRow);
+	$("#"+idSecondRow+"").append(secondRow);
+}
+
+function writeRowWithCAFiveRow(de,json,idFirstRow,idSecondRow,idThirdRow,idFourthRow,idFifthRow,idCaFirstRow,idCaSecondRow,idCaThirdRow,idCaFourthRow,idCaFifthRow,SumID){
+	var firstRow="";
+	var secondRow="";
+	var thirdRow="";
+	var fourthRow="";
+	var fifthRow="";
+	var sumrow="";
+	stt++;
+	var temp=0;
+	var sumfirstRow=0;
+	var sumsecondRow=0;
+	var sumthirdRow=0;
+	var sumfourthRow=0;
+	var sumfifthRow=0;
+	var sumall=0;
+	orgUnitChilds.forEach(function(child){
+		temp++;
+		firstRow += "<td align='center'>"+getValue(json, idCaFirstRow, de, child.id)+"</td>";
+		secondRow += "<td align='center'>"+getValue(json, idCaSecondRow, de, child.id)+"</td>";
+		thirdRow += "<td align='center'>"+getValue(json, idCaThirdRow, de, child.id)+"</td>";
+		fourthRow += "<td align='center'>"+getValue(json, idCaFourthRow, de, child.id)+"</td>";
+		fifthRow += "<td align='center'>"+getValue(json, idCaFifthRow, de, child.id)+"</td>";
+		sumfirstRow=sumfirstRow+getValue(json, idCaFirstRow, de, child.id);
+		sumsecondRow=sumsecondRow+getValue(json, idCaSecondRow, de, child.id);
+		sumthirdRow=sumthirdRow+getValue(json, idCaThirdRow, de, child.id);
+		sumfourthRow=sumfourthRow+getValue(json, idCaFourthRow, de, child.id);
+		sumfifthRow=sumfifthRow+getValue(json, idCaFifthRow, de, child.id);
+		if(SumID == "NumberofInpatientfromlowerlevelofcare"){
+				sumrow+= "<td align='center'><strong>"+(getValue(json, idCaFirstRow, de, child.id)+getValue(json, idCaSecondRow, de, child.id)+getValue(json, idCaThirdRow, de, child.id)+getValue(json, idCaFourthRow, de, child.id)+getValue(json, idCaFifthRow, de, child.id))+"</strong></td>";
+		}
+		if(temp==orgUnitChilds.length)
+		{
+			if(SumID == "NumberofInpatientfromlowerlevelofcare"){
+				sumrow += "<td align='center'><strong>"+(sumfirstRow+sumsecondRow+sumthirdRow+sumfourthRow+sumfifthRow)+"</strong></td>";
+			}
+			firstRow += "<td align='center'><strong>"+sumfirstRow+"</strong></td>";
+			secondRow += "<td align='center'><strong>"+sumsecondRow+"</strong></td>";
+			thirdRow += "<td align='center'><strong>"+sumthirdRow+"</strong></td>";
+			fourthRow += "<td align='center'><strong>"+sumfourthRow+"</strong></td>";
+			fifthRow += "<td align='center'><strong>"+sumfifthRow+"</strong></td>";
+		}
+	});
+		if(SumID == "NumberofInpatientfromlowerlevelofcare"){
+				$("#NumberofInpatientfromlowerlevelofcare").append(sumrow);
+		}
+	//male=male+"</tr>";
+	//female=male+"</tr>";
+	$("#"+idFirstRow+"").append(firstRow);
+	$("#"+idSecondRow+"").append(secondRow);
+	$("#"+idThirdRow+"").append(thirdRow);
+	$("#"+idFourthRow+"").append(fourthRow);
+	$("#"+idFifthRow+"").append(fifthRow);
+}
+
+function writeRowWithCASixRow(de,json,idFirstRow,idSecondRow,idThirdRow,idFourthRow,idFifthRow,idSixthRow,idCaFirstRow,idCaSecondRow,idCaThirdRow,idCaFourthRow,idCaFifthRow,idCaSixthRow,IDSum){
+	var firstRow="";
+	var secondRow="";
+	var thirdRow="";
+	var fourthRow="";
+	var fifthRow="";
+	var sixthRow="";
+	var sumrow="";
+	stt++;
+	var temp=0;
+	var sumfirstRow=0;
+	var sumsecondRow=0;
+	var sumthirdRow=0;
+	var sumfourthRow=0;
+	var sumfifthRow=0;
+	var sumsixthRow=0;
+	var sumall=0;
+	orgUnitChilds.forEach(function(child){
+		temp++;
+		firstRow += "<td align='center'>"+getValue(json, idCaFirstRow, de, child.id)+"</td>";
+		secondRow += "<td align='center'>"+getValue(json, idCaSecondRow, de, child.id)+"</td>";
+		thirdRow += "<td align='center'>"+getValue(json, idCaThirdRow, de, child.id)+"</td>";
+		fourthRow += "<td align='center'>"+getValue(json, idCaFourthRow, de, child.id)+"</td>";
+		fifthRow += "<td align='center'>"+getValue(json, idCaFifthRow, de, child.id)+"</td>";
+		sixthRow += "<td align='center'>"+getValue(json, idCaSixthRow, de, child.id)+"</td>";
+		sumfirstRow=sumfirstRow+getValue(json, idCaFirstRow, de, child.id);
+		sumsecondRow=sumsecondRow+getValue(json, idCaSecondRow, de, child.id);
+		sumthirdRow=sumthirdRow+getValue(json, idCaThirdRow, de, child.id);
+		sumfourthRow=sumfourthRow+getValue(json, idCaFourthRow, de, child.id);
+		sumfifthRow=sumfifthRow+getValue(json, idCaFifthRow, de, child.id);
+		sumsixthRow=sumsixthRow+getValue(json, idCaSixthRow, de, child.id);
+		if(IDSum == "MocausedbyInPoiandOtherExfactor"){
+			sumrow+= "<td align='center'><strong>"+(getValue(json, idCaFirstRow, de, child.id)+getValue(json, idCaSecondRow, de, child.id)+getValue(json, idCaThirdRow, de, child.id)+getValue(json, idCaFourthRow, de, child.id)+getValue(json, idCaFifthRow, de, child.id)+getValue(json, idCaSixthRow, de, child.id))+"</strong></td>";
+		}
+		if(temp==orgUnitChilds.length)
+		{
+			if(IDSum == "MocausedbyInPoiandOtherExfactor"){
+				sumrow += "<td align='center'><strong>"+(sumfirstRow+sumsecondRow+sumthirdRow+sumfourthRow+sumfifthRow+sumsixthRow)+"</strong></td>";
+			}
+			
+			firstRow += "<td align='center'><strong>"+sumfirstRow+"</strong></td>";
+			secondRow += "<td align='center'><strong>"+sumsecondRow+"</strong></td>";
+			thirdRow += "<td align='center'><strong>"+sumthirdRow+"</strong></td>";
+			fourthRow += "<td align='center'><strong>"+sumfourthRow+"</strong></td>";
+			fifthRow += "<td align='center'><strong>"+sumfifthRow+"</strong></td>";
+			sixthRow += "<td align='center'><strong>"+sumsixthRow+"</strong></td>";
+		}
+	});
+	if(IDSum == "MocausedbyInPoiandOtherExfactor"){
+			$("#MocausedbyInPoiandOtherExfactor").append(sumrow);
+	}
+	//male=male+"</tr>";
+	//female=male+"</tr>";
+	$("#"+idFirstRow+"").append(firstRow);
+	$("#"+idSecondRow+"").append(secondRow);
+	$("#"+idThirdRow+"").append(thirdRow);
+	$("#"+idFourthRow+"").append(fourthRow);
+	$("#"+idFifthRow+"").append(fifthRow);
+	$("#"+idSixthRow+"").append(sixthRow);
+}
+
+function writeRowWithCASevenRow(de,json,idFirstRow,idSecondRow,idThirdRow,idFourthRow,idFifthRow,idSixthRow,idSeventhRow,idCaFirstRow,idCaSecondRow,idCaThirdRow,idCaFourthRow,idCaFifthRow,idCaSixthRow,idCaSeventhRow,SumID){
+	var firstRow="";
+	var secondRow="";
+	var thirdRow="";
+	var fourthRow="";
+	var fifthRow="";
+	var sixthRow="";
+	var seventhRow="";
+	var sumrow="";
+	stt++;
+	var temp=0;
+	var sumfirstRow=0;
+	var sumsecondRow=0;
+	var sumthirdRow=0;
+	var sumfourthRow=0;
+	var sumfifthRow=0;
+	var sumsixthRow=0;
+	var sumseventhRow=0;
+	//Numberofmedicalexamination
+	orgUnitChilds.forEach(function(child){
+		temp++;
+		firstRow += "<td align='center'>"+getValue(json, idCaFirstRow, de, child.id)+"</td>";
+		secondRow += "<td align='center'>"+getValue(json, idCaSecondRow, de, child.id)+"</td>";
+		thirdRow += "<td align='center'>"+getValue(json, idCaThirdRow, de, child.id)+"</td>";
+		fourthRow += "<td align='center'>"+getValue(json, idCaFourthRow, de, child.id)+"</td>";
+		fifthRow += "<td align='center'>"+getValue(json, idCaFifthRow, de, child.id)+"</td>";
+		sixthRow += "<td align='center'>"+getValue(json, idCaSixthRow, de, child.id)+"</td>";
+		seventhRow += "<td align='center'>"+getValue(json, idCaSeventhRow, de, child.id)+"</td>";
+		sumfirstRow=sumfirstRow+getValue(json, idCaFirstRow, de, child.id);
+		sumsecondRow=sumsecondRow+getValue(json, idCaSecondRow, de, child.id);
+		sumthirdRow=sumthirdRow+getValue(json, idCaThirdRow, de, child.id);
+		sumfourthRow=sumfourthRow+getValue(json, idCaFourthRow, de, child.id);
+		sumfifthRow=sumfifthRow+getValue(json, idCaFifthRow, de, child.id);
+		sumsixthRow=sumsixthRow+getValue(json, idCaSixthRow, de, child.id);
+		sumseventhRow=sumseventhRow+getValue(json, idCaSeventhRow, de, child.id);
+		if(SumID == "Numberofmedicalexamination"){
+				sumrow+= "<td align='center'><strong>"+(getValue(json, idCaFirstRow, de, child.id)+getValue(json, idCaSecondRow, de, child.id)+getValue(json, idCaThirdRow, de, child.id)+getValue(json, idCaFourthRow, de, child.id)+getValue(json, idCaFifthRow, de, child.id)+getValue(json, idCaSixthRow, de, child.id)+getValue(json, idCaSeventhRow, de, child.id))+"</strong></td>";
+		}
+		if(temp==orgUnitChilds.length)
+		{
+			if(SumID == "Numberofmedicalexamination"){
+				sumrow += "<td align='center'><strong>"+(sumfirstRow+sumsecondRow+sumthirdRow+sumfourthRow+sumfifthRow+sumsixthRow+sumseventhRow)+"</strong></td>";
+			}
+			firstRow += "<td align='center'><strong>"+sumfirstRow+"</strong></td>";
+			secondRow += "<td align='center'><strong>"+sumsecondRow+"</strong></td>";
+			thirdRow += "<td align='center'><strong>"+sumthirdRow+"</strong></td>";
+			fourthRow += "<td align='center'><strong>"+sumfourthRow+"</strong></td>";
+			fifthRow += "<td align='center'><strong>"+sumfifthRow+"</strong></td>";
+			sixthRow += "<td align='center'><strong>"+sumsixthRow+"</strong></td>";
+			seventhRow += "<td align='center'><strong>"+sumseventhRow+"</strong></td>";
+		}
+	});
+	//male=male+"</tr>";
+	//female=male+"</tr>";
+		if(SumID == "Numberofmedicalexamination"){
+				$("#Numberofmedicalexamination").append(sumrow);
+			}
+	$("#"+idFirstRow+"").append(firstRow);
+	$("#"+idSecondRow+"").append(secondRow);
+	$("#"+idThirdRow+"").append(thirdRow);
+	$("#"+idFourthRow+"").append(fourthRow);
+	$("#"+idFifthRow+"").append(fifthRow);
+	$("#"+idSixthRow+"").append(sixthRow);
+	$("#"+idSeventhRow+"").append(seventhRow);
+}
+
+function sumRow(DEs,json,rowid){
+	var RowSum="";
+	var temp1=0;
+	var sums=0;
+	stt++;
+	var temp1=0;
+	orgUnitChilds.forEach(function(child){
+		var Dsum=0;
+		
+		temp1++;
+		DEs.forEach(function(de){
+			Dsum=Dsum+getValue(json, "iu57yAF8dfP", de, child.id);
+		});
+		RowSum += "<td align='center'><strong>"+Dsum+"</strong></td>";
+		sums=sums+Dsum;
+		if(temp1==orgUnitChilds.length)
+		{
+			RowSum += "<td align='center'><strong>"+sums+"</strong></td></tr>";
+		}
+		
+	});
+
+	$("#"+rowid+"").append(RowSum);
+}
+
+
+
+function getValue(json, ca, de, orgUnit){
+	for (var i=0; i < json.rows.length; i++){
+			if (json.rows[i][0] == de && json.rows[i][1] == ca && json.rows[i][2] == orgUnit)
+			{
+				return json.rows[i][3]== null ? 0 : parseInt(json.rows[i][3]);
+			}
+		}
+	return 0;
+}
+
+</script>
+<style type="text/css"><!--
+.style1 {
+	font-size: 24px;
+	font-weight: bold;
+}
+.title{
+font-weight: bold;
+}
+.alignc{
+text-align:center;
+}
+-->
+</style>
+<div>
+<div align="left" class="style1" id="orgunitid"></div>
+</div>
+<div id="printing">
+<table border="1" cellpadding="1" cellspacing="0" width="100%">
+	<tbody>
+		<tr id="title">
+			<td class="alignc" width="7%" rowspan="2">No.</td>
+			<td colspan="4">
+			<div align="center">Data</div>			</td>
+		</tr>
+		<tr>
+			
+			<td class="alignc" colspan="4">A</td>
+		</tr>
+		<tr id="delivery">
+			<td class="alignc">1</td>
+			<td class="title" rowspan="25" width="10%">Delivery</td>
+			<td class="title" colspan="3">The number of delivery</td>
+		</tr>
+		<tr id="PregnantANC6">
+			<td class="alignc">2</td>
+			<td colspan="3">&nbsp;&nbsp;&nbsp; The number of pregnant women who attented to ANC 6 &nbsp;&nbsp;&nbsp;and more times</td>
+		</tr>
+		<tr id="deliveryathome">
+			<td class="alignc">3</td>
+			<td colspan="3">&nbsp;&nbsp;&nbsp;Delivery at home</td>
+		</tr>
+		<tr id="NumberofLB">
+			<td class="alignc">4</td>
+			<td class="title" colspan="3">The number of live birth</td>
+		</tr>
+		<tr id="NumberofLBMale">
+			<td class="alignc">5</td>
+			<td class="alignc" rowspan="2" width="10%">Sex</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="NumberofLBFemale">
+			<td class="alignc">6</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="NumberofLBUrban">
+			<td class="alignc">7</td>
+			<td class="alignc" rowspan="2">Location</td>
+			<td colspan="2">Urban</td>
+		</tr>
+		<tr id="NumberofLBRural">
+			<td class="alignc">8</td>
+			<td colspan="2">Rural</td>
+		</tr>  
+		<tr id="LBFedpromised">
+			<td class="alignc">9</td>
+			<td colspan="3">The number of infants within one hour breast fed promised</td>
+		</tr>   
+		<tr id="LBAbnormality">
+			<td class="alignc">10</td>
+			<td colspan="3">The number of congenital abnormality</td>
+		</tr>
+		<tr id="LBlessthan2500g">
+			<td class="alignc">11</td>
+			<td colspan="3">The number of low birthweight /less than 2500g/</td>
+		</tr>
+		<tr id="LB22-28weeks">
+			<td class="alignc">12</td>
+			<td class="alignc" rowspan="5">Gestational age</td>
+			<td colspan="2">22-28 weeks of gestation</td>
+		</tr>
+		<tr id="LB29-32weeks">
+			<td class="alignc">13</td>
+			<td colspan="2">29-32 weeks of gestation</td>
+		</tr>
+		<tr id="LB33-36weeks">
+			<td class="alignc">14</td>
+			<td colspan="2">33-36 weeks of gestation</td>
+		</tr>
+		<tr id="LB37-42weeks">
+			<td class="alignc">15</td>
+			<td colspan="2">37-42 weeks of gestation</td>
+		</tr>
+		<tr id="LB42weeks">
+			<td class="alignc">16</td>
+			<td colspan="2">42 weeks of gestation</td>
+		</tr>
+		<tr id="NumberofSB">
+			<td class="alignc">17</td>
+			<td class="title" colspan="3">The number of still birth</td>
+		</tr>
+		<tr id="NumberofSBMale">
+			<td class="alignc">18</td>
+			<td class="alignc" rowspan="2">Sex</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="NumberofSBFemale">
+
+			<td class="alignc">19</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="SB22-28weeks">
+			<td class="alignc">20</td>
+			<td class="alignc" rowspan="5">Gestational age</td>
+			<td colspan="2">22-28 weeks of gestation</td>
+		</tr>
+		<tr id="SB29-32weeks">
+			<td class="alignc">21</td>
+			<td colspan="2">29-32 weeks of gestation</td>
+		</tr>
+		<tr id="SB33-36weeks">
+			<td class="alignc">22</td>
+			<td colspan="2">33-36 weeks of gestation</td>
+		</tr>
+		<tr id="SB37-42weeks">
+			<td class="alignc">23</td>
+			<td colspan="2">37-42 weeks of gestation</td>
+		</tr>
+		<tr id="SB42weeks">
+			<td class="alignc">24</td>
+			<td colspan="2">42 weeks of gestation</td>
+		</tr>
+		<tr id="SBlessthan2500g">
+			<td class="alignc">25</td>
+			<td colspan="3">Number of low birthweight /less than 2500 g/</td>
+		</tr>
+		<tr id="NumberofMortality">
+			<td class="alignc">26</td>
+			<td class="title" rowspan="25">Population mortality</td>
+			<td class="title" colspan="3">The number of mortality</td>
+		</tr>
+		<tr id="NumberofMortalityMale">
+			<td class="alignc">27</td>
+			<td class="alignc" rowspan="2">Sex</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="NumberofMortalityFemale">
+			<td class="alignc">28</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="MoHospitaldeaths">
+			<td class="alignc">29</td>
+			<td colspan="3">The hospital deaths</td>
+		</tr>
+		<tr id="Modeath24hrs">
+			<td class="alignc">30</td>
+			<td colspan="3">Hospital deaths within 24 hrs of admission</td>
+		</tr>
+		<tr id="Modeath8-24">
+			<td class="alignc">31</td>
+			<td colspan="3">Hospital deaths within 8-24 hrs of admission</td>
+		</tr>
+		<tr id="Modeathoutofhospital">
+			<td class="alignc">32</td>
+			<td colspan="3">Number of death out of hospital</td>
+		</tr>
+		<tr id="NumberofInMo">
+			<td class="alignc">33</td>
+			<td class="title" colspan="3">The number of infant mortality</td>
+		</tr>
+		<tr id="InMoMale">
+			<td class="alignc">34</td>
+			<td class="alignc" rowspan="2">Sex</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="InMoFemale">
+			<td class="alignc">35</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="InMoUrban">
+			<td class="alignc">36</td>
+			<td class="alignc" rowspan="2">Location</td>
+			<td colspan="2">Urban</td>
+		</tr>
+		<tr id="InMoRural">
+			<td class="alignc">37</td>
+			<td colspan="2">Rural</td>
+		</tr>
+		<tr id="InMo0-6">
+			<td class="alignc">38</td>
+			<td colspan="3">0-6 days</td>
+		</tr>
+		<tr id="InMo7-28">
+			<td class="alignc">39</td>
+			<td colspan="3">7-28 days</td>
+		</tr>
+		<tr id="InMoabove29">
+			<td class="alignc">40</td>
+			<td colspan="3">above 29 days</td>
+		</tr>
+		<tr id="InMoathome">
+			<td class="alignc">41</td>
+			<td colspan="3">The Infant mortality at home</td>
+		</tr>
+		<tr id="NumberOf1to5ageMo">   
+			<td class="alignc">42</td>
+			<td class="title" colspan="3">The number of 1 to 5 age mortality</td>
+		</tr>
+		<tr id="NumberOf1to5ageMoMale">
+			<td class="alignc">43</td>
+			<td class="alignc" rowspan="2">Sex</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="NumberOf1to5ageMoFemale">
+			<td class="alignc">44</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="NumberOf1to5ageMoUrBan">
+			<td class="alignc">45</td>
+			<td class="alignc" rowspan="2">Location</td>
+			<td colspan="2">Urban</td>
+		</tr>
+		<tr id="NumberOf1to5ageMoRural">
+			<td class="alignc">46</td>
+			<td colspan="2">Rural</td>
+		</tr>
+		<tr id="NumberOf1to5ageMoathome">
+			<td class="alignc">47</td>
+			<td colspan="3">1 to 5 age mortality at home</td>
+		</tr>
+		<tr id="NumberofMaMo">   
+			<td class="alignc">48</td>
+			<td class="title" colspan="3">The number of maternal mortality</td>
+		</tr>
+		<tr id="NumberofMaMoUrban">
+			<td class="alignc">49</td>
+			<td class="alignc" rowspan="2">Location</td>
+			<td colspan="2">Urban</td>
+		</tr>
+		<tr id="NumberofMaMoRural">
+			<td class="alignc">50</td>
+			<td colspan="2">Rural</td>
+		</tr>
+		<tr id="NumberofCancerMo">
+			<td class="alignc">51</td>
+			<td class="title" rowspan="8">The causes of death</td>
+			<td class="title" colspan="3">The number of cancer mortality</td>
+		</tr>
+		<tr id="MocausedbyInPoiandOtherExfactor">
+			<td class="alignc">52</td>
+			<td class="title" colspan="3">Mortality caused by injuries, poisoning and other external factors</td>
+		</tr>
+		<tr id="Suiside">
+			<td class="alignc">53</td>
+			<td rowspan="6">&nbsp;</td>
+			<td colspan="2">Suiside</td>
+		</tr>
+		<tr id="ViolenceHomecide">
+			<td class="alignc">54</td>
+			<td colspan="2">Violence, Homecide</td>
+		</tr>
+		<tr id="Industrialaccidents">
+			<td class="alignc">55</td>
+			<td colspan="2">Industrial accidents</td>
+		</tr>
+		<tr id="Trafficaccident">
+			<td class="alignc">56</td>
+			<td colspan="2">Traffic accident</td>
+		</tr>
+		<tr id="Others">
+			<td class="alignc">57</td>
+			<td colspan="2">Others</td>
+		</tr>
+		<tr id="Unknown">
+			<td class="alignc">58</td>
+			<td colspan="2">Unknown</td>
+		</tr>
+		<tr id="NumberofInpatient"> 
+			<td class="alignc">59</td>
+			<td class="title" rowspan="11">Hospital</td>
+			<td class="title" colspan="3">The number of inpatients</td>
+		</tr>
+		<tr id="NumberofInpatientUrban">
+			<td class="alignc">60</td>
+			<td class="alignc" rowspan="2">Location</td>
+			<td colspan="2">Urban</td>
+		</tr>
+		<tr id="NumberofInpatientRural">
+			<td class="alignc">61</td>
+			<td colspan="2">Rural</td>
+		</tr>
+		<tr id="NumberofInpatientfromlowerlevelofcare">
+			<td class="alignc">62</td>
+			<td colspan="3">The number of inpatients referred form the lower level of care</td>
+		</tr>
+		<tr id="Aimaggenerelhospital">
+			<td class="alignc">63</td>
+			<td class="alignc" rowspan="5">Out of</td>
+			<td colspan="2">Aimag generel hospital</td>
+		</tr>
+		<tr id="Soumhealthcenter">
+			<td class="alignc">64</td>
+			<td colspan="2">
+			<p>Soum health center</p>			</td>
+		</tr>
+		<tr id="Intersoumhealthcenter">
+			<td class="alignc">65</td>
+			<td colspan="2">Inter-soum health center</td>
+		</tr>
+		<tr id="PHCdistricthealthcenter">
+			<td class="alignc">66</td>
+			<td colspan="2">PHC, district health center</td>
+		</tr>
+		<tr id="OutofOthers">
+			<td class="alignc">67</td>
+			<td colspan="2">Others</td>
+		</tr>
+		<tr id="Numberofdischarge">
+			<td class="alignc">68</td>
+			<td class="title" colspan="3">The number of discharge</td>
+		</tr>
+		<tr id="Beddays">
+			<td class="alignc">69</td>
+			<td class="title" colspan="3">Bed days</td>
+		</tr>
+		<tr id="NumberofExamination">
+			<td class="alignc">70</td>
+			<td class="title" rowspan="29">Out-patient data</td>
+			<td class="title" colspan="3">The number of examination</td>
+		</tr>
+		<tr id="NumberofExaminationMale">
+			<td class="alignc">71</td>
+			<td class="alignc" rowspan="2">Sex</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="NumberofExaminationFemale">
+			<td class="alignc">72</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="Preventivemedicalcheckups">
+			<td class="alignc">73</td>
+			<td class="alignc" rowspan="8">
+			<p>Examination type</p>			</td>
+			<td colspan="2">Preventive medical check-ups</td>
+		</tr>
+		<tr id="NumberofOutpatient">
+			<td class="alignc">74</td>   
+			<td colspan="2">The number of outpatient</td>
+		</tr>
+		<tr id="NumberofOutpatient1stTime">
+			<td class="alignc">75</td>
+			<td rowspan="2" width="4%">Out of</td>
+			<td width="32%">First time</td>
+		</tr>
+		<tr id="NumberofOutpatientRepeat">
+			<td class="alignc">76</td>
+			<td>Repeat</td>
+		</tr>
+		<tr id="Activeexamination">
+			<td class="alignc">77</td>
+			<td colspan="2">Active examination</td>
+		</tr>
+		<tr id="Activevisittohousehold">
+			<td class="alignc">78</td>
+			<td colspan="2">Active visit to house hold</td>
+		</tr>
+		<tr id="Numberofcallhomeinspection">
+			<td class="alignc">79</td>
+			<td colspan="2">The number of calls home inspection</td>
+		</tr>
+		<tr id="Numberofoutpatientfromthelowercare">
+			<td class="alignc">80</td>
+			<td colspan="2">The number of outpatients referred form the lower level of care</td>
+		</tr>
+		<tr id="Numberofmedicalexamination">
+			<td class="alignc">81</td>
+			<td class="title" colspan="3">The number of medical examination</td>
+		</tr>
+		<tr id="MedicalHierachyBags">
+			<td class="alignc">82</td>
+			<td class="alignc" rowspan="7">Medical hierachy</td>
+			<td colspan="2">Bags feldshers</td>
+		</tr>
+		<tr id="MedicalHierachySoums">
+			<td class="alignc">83</td>
+			<td colspan="2">Soums feldshers</td>
+		</tr>
+		<tr id="MedicalHierachyMidwife">
+			<td class="alignc">84</td>
+			<td colspan="2">Midwife</td>
+		</tr>
+		<tr id="MedicalHierachySoumsPhys">
+			<td class="alignc">85</td>
+			<td colspan="2">Soums physicians</td>
+		</tr>
+		<tr id="MedicalHierachyAimagHC">
+			<td class="alignc">86</td>
+			<td colspan="2">Aimag and district HC-s physicians</td>
+		</tr>
+		<tr id="MedicalHierachyPHCs">
+			<td class="alignc">87</td>
+			<td colspan="2">PHC-s physicians</td>
+		</tr>
+		<tr id="MedicalHierachyOthers">
+			<td class="alignc">88</td>
+			<td colspan="2">Others</td>
+		</tr>
+		<tr id="Hypertension1stTime"> 
+			<td class="alignc">89</td>
+			<td class="title" colspan="3">The number of people screened for arterial hypertension /first time/</td>
+		</tr>
+		<tr id="Hypertension1stTimeMale">
+			<td class="alignc">90</td>
+			<td rowspan="2">&nbsp;</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="Hypertension1stTimeFemale">
+			<td class="alignc">91</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="Hypertension1stTimeRepeat">
+			<td class="alignc">92</td>
+			<td colspan="3">Repeat</td>
+		</tr>
+		<tr id="Munberwithhypertension">
+			<td class="alignc">93</td>
+			<td>&nbsp;</td>
+			<td colspan="2">The munber of diagnosed with hypertension</td>
+		</tr>
+		<tr id="Numberofpeoplediabetestype1stTime"> 
+			<td class="alignc">94</td>
+			<td class="title" colspan="3">The number of people screened for diabetes type 2 /first time/</td>
+		</tr>
+		<tr id="Numberofpeoplediabetestype1stTimeMale">
+			<td class="alignc">95</td>
+			<td rowspan="2">&nbsp;</td>
+			<td colspan="2">Male</td>
+		</tr>
+		<tr id="Numberofpeoplediabetestype1stTimeFemale">
+			<td class="alignc">96</td>
+			<td colspan="2">Female</td>
+		</tr>
+		<tr id="Numberofpeoplediabetestype1stTimeRepeat">
+			<td class="alignc">97</td>
+			<td colspan="3">Repeat</td>
+		</tr>
+		<tr id="Munberwithdiabetes">
+			<td class="alignc">98</td>
+			<td>&nbsp;</td>
+			<td colspan="2">The munber of diagnosed with diabetes type 2</td>
+		</tr>
+		<tr id="NumberofPregnanWomen">
+			<td class="alignc">99</td>
+			<td class="title" rowspan="8">ANC</td>
+			<td class="title" colspan="3">The number of pregnant women</td>
+		</tr>
+		<tr id="ANCcov">
+			<td class="alignc">100</td>
+			<td class="title" colspan="3">ANC coverage</td>
+		</tr>
+		<tr id="earlyANCcov">
+			<td class="alignc">101</td>
+			<td rowspan="3">&nbsp;</td>
+			<td colspan="2">Early ANC coverage</td>
+		</tr>
+		<tr id="ANCcov4-6">
+			<td class="alignc">102</td>
+			<td colspan="2">4-6 months</td>
+		</tr>
+		<tr id="LateANCcov">
+			<td class="alignc">103</td>
+			<td colspan="2">Late ANC coverage</td>
+		</tr>
+		<tr id="numberofbloodtestingpregnantwomen">
+			<td class="alignc">104</td>
+			<td colspan="3">The number of blood testing among the pregnant women</td>
+		</tr>
+		<tr id="hemoglobulintest">
+			<td class="alignc">105</td>
+			<td colspan="3">Hemoglobulin test</td>
+		</tr>
+		<tr id="NumberofPrenantwithanemia">
+			<td class="alignc">106</td>
+			<td colspan="3">The number of pregnant women with anemia</td>
+		</tr>
+		<tr id="NumberofPrenanttestedfortrichominiasis">
+			<td class="alignc">107</td>
+			<td class="title" rowspan="8">
+			<div align="left">The number of tested HIV and STI among pregnant women</div>			</td>
+			<td colspan="3">The number of pregnant women tested for trichomoniasis</td>
+		</tr>
+		<tr id="NumberofPrenanttestedfortrichominiasisoutpositive">
+			<td class="alignc">108</td>
+			<td colspan="3">Out: positive</td>
+		</tr>
+		<tr id="NumberofPregnantrestedforgonorea">
+			<td class="alignc">109</td>
+			<td colspan="3">The number of pregnant women tested for gonorea</td>
+		</tr>
+		<tr id="NumberofPregnantrestedforgonoreaoutpositive">
+			<td class="alignc">110</td>
+			<td colspan="3">Out: positive</td>
+		</tr>
+		<tr id="NumberofPregnanttestedforsypilis">
+			<td class="alignc">111</td>
+			<td colspan="3">The number of pregnant women tested for sypilis</td>
+		</tr>
+		<tr id="NumberofPregnanttestedforsypilisoutpositive">
+			<td class="alignc">112</td>
+			<td colspan="3">Out: positive</td>
+		</tr>
+		<tr id="NumberofPregnanttestedforHIV">
+			<td class="alignc">113</td>
+			<td colspan="3">The number of pregnant women tested for HIV</td>
+		</tr>
+		<tr id="NumberofPregnanttestedforHIVoutpositive">
+			<td class="alignc">114</td>
+			<td colspan="3">Out: positive</td>
+		</tr>
+		<tr id="Morbidity">
+			<td class="alignc">115</td>
+			<td class="title" rowspan="15">Morbidity of population</td>
+			<td class="title" colspan="3">Morbidity</td>
+		</tr>
+		<tr id="MorbidityNewregis">
+			<td class="alignc">116</td> 
+			<td rowspan="2">&nbsp;</td>
+			<td colspan="2">New registered</td>
+		</tr>
+		<tr id="MorbidityRegistered">
+			<td class="alignc">117</td>
+			<td colspan="2">Registered</td>
+		</tr>
+		<tr id="MorbidityCancer">
+			<td class="alignc">118</td>
+			<td colspan="3">The number of cancer</td>
+		</tr>
+		<tr id="MorbidityInjury">
+			<td class="alignc">119</td>
+			<td colspan="3">The number of injury</td>
+		</tr>
+		<tr id="MorbidityInfluenza">
+			<td class="alignc">120</td>
+			<td colspan="3">Influenza (J09-J11)</td>
+		</tr>
+		<tr id="Morbidityunder5diarhea">
+			<td class="alignc">121</td>
+			<td colspan="3">Children aged &lt; 5 years with diarhea (K52.0-K52.9)</td>
+		</tr>
+		<tr id="Morbidityunder5acute">
+			<td class="alignc">122</td>
+			<td colspan="3">Children aged &lt; 5 years with acute respiratory symptoms (J00-J06, J20-J22)</td>
+		</tr>
+		<tr id="Morbidityweightedunder5">
+			<td class="alignc">123</td>
+			<td colspan="3">The weighted number of children under 5</td>
+		</tr>
+		<tr id="Morbidityunder5underweight">
+			<td class="alignc">124</td>
+			<td rowspan="6">&nbsp;</td>
+			<td colspan="2">Children &lt; 5 who are underweight</td>
+		</tr>
+		<tr id="Morbidityunder5stun">
+			<td class="alignc">125</td>
+			<td colspan="2">Children &lt;5 who are stunted</td>
+		</tr>
+		<tr id="Morbidityunder5waste">
+			<td class="alignc">126</td>
+			<td colspan="2">Children &lt; 5 who are wasted</td>
+		</tr>
+		<tr id="Morbidityunder5vitaminA">
+			<td class="alignc">127</td>
+			<td colspan="2">Number of children under 5 old who had received vitamin A</td>
+		</tr>
+		<tr id="Morbidityunder5vitaminD">
+			<td class="alignc">128</td>
+			<td colspan="2">Number of children under 5 old who had received vitamin D</td>
+		</tr>
+		<tr id="Morbidityunder5nutrient">
+			<td class="alignc">129</td>
+			<td colspan="2">Number of children under 5 old who had received nutrients</td>
+		</tr>
+		<tr id="NumberofEmergencycall">
+			<td class="alignc">130</td>
+			<td colspan="4">The number of emergency calls</td>
+		</tr>
+		<tr id="Ambulancecall">
+			<td class="alignc">131</td>
+			<td rowspan="2">&nbsp;</td>
+			<td colspan="3">Ambulance call from remote areas</td>
+		</tr>
+		<tr id="Injurycases">
+			<td class="alignc">132</td>
+			<td colspan="3">Injury cases</td>
+		</tr>
+	</tbody>
+</table>
+</div>
